@@ -19,18 +19,18 @@ double y = 0;
 int submeshIndex = 0;
 
 bool showFaces = true;
-std::vector<std::string> paths = {"/Users/rohansawhney/Desktop/developer/C++/submesh/kitten.obj"};
+std::string path = "/Users/rohansawhney/Desktop/developer/C++/submesh/kitten.obj";
 
 std::vector<Mesh> submeshes;
 bool success = true;
 
 void printInstructions()
 {
-    std::cerr << "space: toggle between meshes\n"
-              << "q: toggle between drawing polygons and edges\n"
+    std::cerr << "q: toggle between drawing polygons and edges\n"
               << "↑/↓: move in/out\n"
               << "w/s: move up/down\n"
               << "a/d: move left/right\n"
+              << "→/←: toggle between submeshes\n"
               << "escape: exit program\n"
               << std::endl;
 }
@@ -38,7 +38,7 @@ void printInstructions()
 void loadMeshes()
 {
     Mesh mesh;
-    success = mesh.read(paths[0]);
+    success = mesh.read(path);
     if (success) {
         submeshes = mesh.generateSubmeshes();
     }
