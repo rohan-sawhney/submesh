@@ -7,25 +7,29 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>C6DA5AAB-73E5-4F9C-A66B-A839E299DB13</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>submesh</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>93012211585513E702385219484BD8E8D4D7E84E</key>
 		<string>https://github.com/rohan-sawhney/medial-axis-transform-2d.git</string>
+		<key>A18BAC7EAC6EED1470A5E77D66B26E637CE75D99</key>
+		<string>https://github.com/rohan-sawhney/submesh.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>submesh/submesh.xcodeproj/project.xcworkspace</string>
+	<string>submesh.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>93012211585513E702385219484BD8E8D4D7E84E</key>
 		<string>../../..</string>
+		<key>A18BAC7EAC6EED1470A5E77D66B26E637CE75D99</key>
+		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/rohan-sawhney/medial-axis-transform-2d.git</string>
+	<string>https://github.com/rohan-sawhney/submesh.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>93012211585513E702385219484BD8E8D4D7E84E</string>
+	<string>A18BAC7EAC6EED1470A5E77D66B26E637CE75D99</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -34,7 +38,15 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>93012211585513E702385219484BD8E8D4D7E84E</string>
 			<key>IDESourceControlWCCName</key>
-			<string>C++</string>
+			<string></string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>A18BAC7EAC6EED1470A5E77D66B26E637CE75D99</string>
+			<key>IDESourceControlWCCName</key>
+			<string>submesh</string>
 		</dict>
 	</array>
 </dict>
