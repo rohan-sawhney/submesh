@@ -13,7 +13,7 @@ Mesh::Mesh(const Mesh& mesh)
     *this = mesh;
 }
 
-bool Mesh::read(const std::string& fileName)
+bool Mesh::read(const std::string& fileName, const int mode)
 {
     std::ifstream in(fileName.c_str());
 
@@ -22,7 +22,7 @@ bool Mesh::read(const std::string& fileName)
     }
     
     bool readSuccessful = false;
-    if ((readSuccessful = MeshIO::read(in, *this))) {
+    if ((readSuccessful = MeshIO::read(in, *this, mode))) {
         normalize();
     }
     
@@ -42,7 +42,7 @@ bool Mesh::write(const std::string& fileName) const
     return false;
 }
 
-std::vector<Mesh> Mesh::generateSubmeshes()
+std::vector<Mesh> Mesh::generateSubmeshesEdgeApproach()
 {
     std::vector<Mesh> meshes;
     
@@ -98,7 +98,75 @@ std::vector<Mesh> Mesh::generateSubmeshes()
         
         meshSize ++;
     }
+    
+    return meshes;
+}
+
+std::vector<Mesh> Mesh::generateSubmeshesFaceApproach()
+{
+    std::vector<Mesh> meshes;
+    
+    int seen = 0;
+    int meshSize = 0;
+    while (seen != facePointers.size()) {
+        Mesh mesh;
+        meshes.push_back(mesh);
         
+        std::stack<Face*> stack;
+        Face *f = NULL;
+        for (int i = 0; i < (int)facePointers.size(); i++) {
+            if (!facePointers[i]->seen) {
+                f = facePointers[i];
+                f->seen = true;
+                stack.push(f);
+                seen ++;
+                break;
+            }
+        }
+        
+        if (f) {
+            do {
+                f = stack.top();
+                stack.pop();
+                
+                for (int i = 0; i < (int)f->adjFaces.size(); i++) {
+                    if (!f->adjFaces[i]->seen) {
+                        f->adjFaces[i]->seen = true;
+                        stack.push(f->adjFaces[i]);
+                        seen ++;
+                    }
+                }
+                
+                meshes[meshSize].facePointers.push_back(f);
+            } while (!stack.empty());
+        }
+        
+        std::unordered_map<int, int> indices;
+        for (int i = 0; i < (int)meshes[meshSize].facePointers.size(); i++) {
+            Face *f = meshes[meshSize].facePointers[i];
+            
+            if (indices.find(f->a) == indices.end()) {
+                meshes[meshSize].vertices.push_back(vertices[f->a]);
+                indices[f->a] = (int)meshes[meshSize].vertices.size()-1;
+            }
+            f->a = indices[f->a];
+            
+            if (indices.find(f->b) == indices.end()) {
+                meshes[meshSize].vertices.push_back(vertices[f->b]);
+                indices[f->b] = (int)meshes[meshSize].vertices.size()-1;
+            }
+            f->b = indices[f->b];
+            
+            if (indices.find(f->c) == indices.end()) {
+                meshes[meshSize].vertices.push_back(vertices[f->c]);
+                indices[f->c] = (int)meshes[meshSize].vertices.size()-1;
+            }
+            f->c = indices[f->c];
+        }
+        
+        meshSize ++;
+    }
+    
     return meshes;
 }
 

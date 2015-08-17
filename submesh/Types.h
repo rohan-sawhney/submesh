@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
 #include <iostream>
 #include "math.h"
 #include <Eigen/Core>

@@ -18,15 +18,16 @@ double z = -2.5;
 double y = 0;
 int submeshIndex = 0;
 
-bool showFaces = true;
-std::string path = "/Users/rohansawhney/Desktop/developer/C++/submesh/kitten.obj";
 
+std::vector<std::string> paths = {"/Users/rohansawhney/Desktop/developer/C++/submesh/kitten.obj",
+                                  "/Users/rohansawhney/Desktop/developer/C++/submesh/house.obj"};
 std::vector<Mesh> submeshes;
+int m = 0;
 bool success = true;
 
 void printInstructions()
 {
-    std::cerr << "q: toggle between drawing polygons and edges\n"
+    std::cerr << "' ': toggle between meshes"
               << "↑/↓: move in/out\n"
               << "w/s: move up/down\n"
               << "a/d: move left/right\n"
@@ -35,41 +36,30 @@ void printInstructions()
               << std::endl;
 }
 
+void clearSubmeshes()
+{
+    for (int i = 0; i < (int)submeshes.size(); i++) {
+        for (int j = 0; j < (int)submeshes[i].facePointers.size(); j++) {
+            delete submeshes[i].facePointers[j];
+        }
+    }
+}
+
 void loadMeshes()
 {
     Mesh mesh;
-    success = mesh.read(path);
+    success = mesh.read(paths[m], 0);
     if (success) {
-        submeshes = mesh.generateSubmeshes();
+        submeshes = mesh.generateSubmeshesFaceApproach();
     }
 }
 
 void init()
 {
     glClearColor(0.0, 0.0, 0.0, 0.0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
-}
-
-void drawEdges()
-{
-    for (int i = 0; i < (int)submeshes.size(); i++) {
-        if (i == submeshIndex) {
-            glColor4f(0.0, 1.0, 0.0, 0.6);
-        } else {
-            glColor4f(1.0, 1.0, 1.0, 0.6);
-        }
-        
-        glBegin(GL_LINES);
-        for (EdgeCIter e = submeshes[i].edges.begin(); e != submeshes[i].edges.end(); e ++) {
-            Eigen::Vector3d a = e->he->vertex->position;
-            Eigen::Vector3d b = e->he->flip->vertex->position;
-            
-            glVertex3d(a.x(), a.y(), a.z());
-            glVertex3d(b.x(), b.y(), b.z());
-        }
-        
-        glEnd();
-    }
 }
 
 void drawFaces()
@@ -81,23 +71,26 @@ void drawFaces()
             glColor4f(0.0, 0.0, 1.0, 0.6);
         }
         
-        for (FaceCIter f = submeshes[i].faces.begin(); f != submeshes[i].faces.end(); f++) {
-        
-            if (f->isBoundary()) continue;
-        
+        for (int j = 0; j < submeshes[i].facePointers.size(); j++) {
             glBegin(GL_LINE_LOOP);
-            HalfEdgeCIter he = f->he;
-            do {
-                glVertex3d(he->vertex->position.x(),
-                           he->vertex->position.y(),
-                           he->vertex->position.z());
+                
+            int a = submeshes[i].facePointers[j]->a;
+            int b = submeshes[i].facePointers[j]->b;
+            int c = submeshes[i].facePointers[j]->c;
+                
+            glVertex3d(submeshes[i].vertices[a].position.x(),
+                        submeshes[i].vertices[a].position.y(),
+                        submeshes[i].vertices[a].position.z());
+            glVertex3d(submeshes[i].vertices[b].position.x(),
+                        submeshes[i].vertices[b].position.y(),
+                        submeshes[i].vertices[b].position.z());
+            glVertex3d(submeshes[i].vertices[c].position.x(),
+                        submeshes[i].vertices[c].position.y(),
+                        submeshes[i].vertices[c].position.z());
             
-                he = he->next;
-            
-            } while (he != f->he);
-        
             glEnd();
         }
+        
     }
 }
 
@@ -119,12 +112,7 @@ void display()
     gluLookAt(0, 0, z, x, y, 0, 0, 1, 0);
     
     if (success) {
-        if (showFaces) {
-            drawFaces();
-            
-        } else {
-            drawEdges();
-        }
+        drawFaces();
     }
     
     glutSwapBuffers();
@@ -133,13 +121,16 @@ void display()
 void keyboard(unsigned char key, int x0, int y0)
 {
     switch (key) {
-        case 27 :
+        case 27:
+            clearSubmeshes();
             exit(0);
         case ' ':
+            m ++;
+            if (m == 2) m = 0;
+            
+            submeshIndex = 0;
+            clearSubmeshes();
             loadMeshes();
-            break;
-        case 'q':
-            showFaces = !showFaces;
             break;
         case 'a':
             x -= 0.03;
@@ -152,13 +143,7 @@ void keyboard(unsigned char key, int x0, int y0)
             break;
         case 's':
             y -= 0.03;
-            break;
-        case GLUT_KEY_UP:
-            z += 0.03;
-            break;
-        case GLUT_KEY_DOWN:
-            z -= 0.03;
-            break;
+            break;        
     }
     
     glutPostRedisplay();

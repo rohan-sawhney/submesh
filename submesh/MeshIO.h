@@ -9,7 +9,7 @@ class MeshData;
 class MeshIO {
 public:
     // reads data from obj file
-    static bool read(std::ifstream& in, Mesh& mesh);
+    static bool read(std::ifstream& in, Mesh& mesh, const int mode);
     
     // writes data in obj format
     static void write(std::ofstream& out, const Mesh& mesh);

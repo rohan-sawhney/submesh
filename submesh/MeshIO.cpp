@@ -5,7 +5,6 @@
 #include "HalfEdge.h"
 #include "Mesh.h"
 #include <set>
-#include <map>
 
 class Index {
 public:
@@ -325,7 +324,7 @@ bool MeshIO::buildMesh(const MeshData& data, Mesh& mesh)
     return true;
 }
 
-bool MeshIO::read(std::ifstream& in, Mesh& mesh)
+bool MeshIO::read(std::ifstream& in, Mesh& mesh, const int mode)
 {
     MeshData data;
     
@@ -364,6 +363,47 @@ bool MeshIO::read(std::ifstream& in, Mesh& mesh)
             
             data.indices.push_back(faceIndices);
         }
+    }
+    
+    if (mode == 0) {
+        for (int i = 0; i < data.positions.size(); i++) {
+            VertexIter vertex = mesh.vertices.insert(mesh.vertices.end(), Vertex());
+            vertex->position = data.positions[i];
+        }
+        
+        int v = 2 * (int)mesh.vertices.size();
+        std::unordered_map<double, std::vector<Face*>> edgeFaces;
+        for (std::vector<std::vector<Index>>::const_iterator f  = data.indices.begin();
+             f != data.indices.end();
+             f ++) {
+            Face *newFace = new Face();
+            newFace->a = (*f)[0].position;
+            newFace->b = (*f)[1].position;
+            newFace->c = (*f)[2].position;
+            
+            double e1 = (newFace->a * newFace->a + newFace->b * newFace->b)*v + newFace->a + newFace->b;
+            double e2 = (newFace->a * newFace->a + newFace->c * newFace->c)*v + newFace->a + newFace->c;
+            double e3 = (newFace->b * newFace->b + newFace->c * newFace->c)*v + newFace->b + newFace->c;
+            
+            edgeFaces[e1].push_back(newFace);
+            edgeFaces[e2].push_back(newFace);
+            edgeFaces[e3].push_back(newFace);
+            
+            mesh.facePointers.push_back(newFace);
+        }
+        
+        for (auto kv : edgeFaces) {
+            for (int i = 0; i < (int)kv.second.size(); i++) {
+                for (int j = 0; j < (int)kv.second.size(); j++) {
+                    if (i != j) {
+                        kv.second[i]->adjFaces.push_back(kv.second[j]);
+                    }
+                }
+            }
+        }
+        
+        return true;
+        
     }
     
     return buildMesh(data, mesh);

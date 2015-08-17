@@ -16,12 +16,16 @@ public:
     Mesh(const Mesh& mesh);
         
     // read mesh from file
-    bool read(const std::string& fileName);
+    bool read(const std::string& fileName, const int mode);
     
     // write mesh to file
     bool write(const std::string& fileName) const;
     
-    std::vector<Mesh> generateSubmeshes();
+    // assumes mesh is manifold
+    std::vector<Mesh> generateSubmeshesEdgeApproach();
+    
+    // works for non manifold meshes
+    std::vector<Mesh> generateSubmeshesFaceApproach();
     
     // member variables
     std::vector<HalfEdge> halfEdges;
@@ -30,6 +34,7 @@ public:
     std::vector<Eigen::Vector3d> normals;
     std::vector<Edge> edges;
     std::vector<Face> faces;
+    std::vector<Face*> facePointers;
     std::vector<HalfEdgeIter> boundaries;
 
 private:

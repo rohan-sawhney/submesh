@@ -19,6 +19,10 @@ public:
     
     // flag for submesh creation
     bool seen;
+    
+    std::vector<Face*> adjFaces;
+    
+    int a, b, c;
 };
 
 #endif
