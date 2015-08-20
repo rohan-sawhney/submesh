@@ -164,6 +164,7 @@ std::vector<Mesh> Mesh::generateSubmeshesFaceApproach()
             f->c = indices[f->c];
         }
         
+        MeshIO::indexVertices(meshes[meshSize]);
         meshSize ++;
     }
     
