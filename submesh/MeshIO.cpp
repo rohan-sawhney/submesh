@@ -402,11 +402,10 @@ bool MeshIO::read(std::ifstream& in, Mesh& mesh, const int mode)
         }
         
         for (auto kv : edgeFaces) {
-            for (int i = 0; i < (int)kv.second.size(); i++) {
-                for (int j = 0; j < (int)kv.second.size(); j++) {
-                    if (i != j) {
-                        kv.second[i]->adjFaces.push_back(kv.second[j]);
-                    }
+            for (int i = 0; i < (int)kv.second.size()-1; i++) {
+                for (int j = i+1; j < (int)kv.second.size(); j++) {
+                    kv.second[i]->adjFaces.push_back(kv.second[j]);
+                    kv.second[j]->adjFaces.push_back(kv.second[i]);
                 }
             }
         }
