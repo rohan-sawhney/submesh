@@ -127,6 +127,7 @@ std::vector<Mesh> Mesh::generateSubmeshesFaceApproach()
         }
         
         if (f) {
+            
             do {
                 f = stack.top();
                 stack.pop();
