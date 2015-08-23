@@ -18,7 +18,6 @@ double z = -2.5;
 double y = 0;
 int submeshIndex = 0;
 
-
 std::vector<std::string> paths = {"/Users/rohansawhney/Desktop/developer/C++/submesh/kitten.obj",
                                   "/Users/rohansawhney/Desktop/developer/C++/submesh/house.obj"};
 std::vector<Mesh> submeshes;
