@@ -382,7 +382,7 @@ bool MeshIO::read(std::ifstream& in, Mesh& mesh, const int mode)
         }
         
         int v = 2 * (int)mesh.vertices.size();
-        std::unordered_map<double, std::vector<Face*>> edgeFaces;
+        std::unordered_map<int, std::vector<Face*>> edgeFaces;
         for (std::vector<std::vector<Index>>::const_iterator f  = data.indices.begin();
              f != data.indices.end();
              f ++) {
@@ -391,9 +391,9 @@ bool MeshIO::read(std::ifstream& in, Mesh& mesh, const int mode)
             newFace->b = (*f)[1].position;
             newFace->c = (*f)[2].position;
             
-            double e1 = (newFace->a * newFace->a + newFace->b * newFace->b)*v + newFace->a + newFace->b;
-            double e2 = (newFace->a * newFace->a + newFace->c * newFace->c)*v + newFace->a + newFace->c;
-            double e3 = (newFace->b * newFace->b + newFace->c * newFace->c)*v + newFace->b + newFace->c;
+            int e1 = (newFace->a * newFace->a + newFace->b * newFace->b)*v + newFace->a + newFace->b;
+            int e2 = (newFace->a * newFace->a + newFace->c * newFace->c)*v + newFace->a + newFace->c;
+            int e3 = (newFace->b * newFace->b + newFace->c * newFace->c)*v + newFace->b + newFace->c;
             
             edgeFaces[e1].push_back(newFace);
             edgeFaces[e2].push_back(newFace);
