@@ -20,10 +20,7 @@ public:
     
     // write mesh to file
     bool write(const std::string& fileName) const;
-    
-    // assumes mesh is manifold
-    std::vector<Mesh> generateSubmeshesEdgeApproach();
-    
+        
     // works for non manifold meshes
     std::vector<Mesh> generateSubmeshesFaceApproach();
     

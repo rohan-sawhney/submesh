@@ -44,70 +44,11 @@ bool Mesh::write(const std::string& fileName) const
     return false;
 }
 
-std::vector<Mesh> Mesh::generateSubmeshesEdgeApproach()
-{
-    std::vector<Mesh> meshes;
-    
-    int seen = 0;
-    int meshSize = 0;
-    while (seen != vertices.size()) {
-        Mesh mesh;
-        meshes.push_back(mesh);
-        
-        std::stack<HalfEdgeIter> stack;
-        
-        VertexIter v;
-        for (v = vertices.begin(); v != vertices.end(); v++) {
-            if (!v->seen) {
-                v->seen = true;
-                seen ++;
-                break;
-            }
-        }
-        meshes[meshSize].vertices.push_back(*v);
-        
-        do {
-            HalfEdgeIter he = v->he;
-            do {
-                if (!he->seen) {
-                    he->seen = true;
-                    stack.push(he);
-                    meshes[meshSize].halfEdges.push_back(*he);
-                    
-                    if (!he->edge->seen) {
-                        he->edge->seen = true;
-                        meshes[meshSize].edges.push_back(*he->edge);
-                    }
-                    
-                    if (!he->face->seen) {
-                        he->face->seen = true;
-                        meshes[meshSize].faces.push_back(*he->face);
-                    }
-                }
-                
-                he = he->flip->next;
-            } while (he != v->he);
-            
-            v = stack.top()->flip->vertex;
-            if (!v->seen) {
-                v->seen = true;
-                seen ++;
-                meshes[meshSize].vertices.push_back(*v);
-            }
-            
-            stack.pop();
-        } while (!stack.empty());
-        
-        meshSize ++;
-    }
-    
-    return meshes;
-}
-
 std::vector<Mesh> Mesh::generateSubmeshesFaceApproach()
 {
     std::vector<Mesh> meshes;
     
+    int start = 0;
     int seen = 0;
     int meshSize = 0;
     while (seen != facePointers.size()) {
@@ -116,12 +57,13 @@ std::vector<Mesh> Mesh::generateSubmeshesFaceApproach()
         
         std::stack<Face*> stack;
         Face *f = NULL;
-        for (int i = 0; i < (int)facePointers.size(); i++) {
+        for (int i = start; i < (int)facePointers.size(); i++) {
             if (!facePointers[i]->seen) {
                 f = facePointers[i];
                 f->seen = true;
                 stack.push(f);
                 seen ++;
+                start = i + 1;
                 break;
             }
         }

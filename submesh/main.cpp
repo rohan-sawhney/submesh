@@ -26,7 +26,7 @@ bool success = true;
 
 void printInstructions()
 {
-    std::cerr << "' ': toggle between meshes"
+    std::cerr << "' ': toggle between meshes\n"
               << "↑/↓: move in/out\n"
               << "w/s: move up/down\n"
               << "a/d: move left/right\n"
